@@ -21,7 +21,19 @@
 \usepackage{setspace}
 \usepackage{rotating}
 \usepackage{colortbl}
+\usepackage{tikz}
+\usepackage{framed}
 
+\definecolor{goldenpoppy}{rgb}{0.99, 0.86, 0.3}
+\definecolor{dark-green}{rgb}{0,0.5,0}
+\definecolor{metallic-green}{rgb}{0.75,0.81,0.58}
+\definecolor{dark-red}{rgb}{0.5,0,0}
+
+\newenvironment{ejercicio}{%
+    \def\FrameCommand{\fboxrule=\FrameRule\fboxsep=\FrameSep \fcolorbox{black}{metallic-green}}%
+    \MakeFramed {\FrameRestore}}%
+{\endMakeFramed}
+               
 \hypersetup{ 
   pdfauthor = {Alberto Ros Bardisa}, 
   pdftitle = {Apuntes de Ampliación de Estructuras de Computadores}, 
@@ -231,33 +243,49 @@ por unidad de tiempo. La clave está en el tiempo.
 Podemos definir el rendimiento como la cantidad de trabajo realizado
 por el computador por unidad de tiempo.
 
+Un ordenador es más rápido que otro cuando realiza la misma cantidad
+de trabajo en menor tiempo (disminuye el tiempo de respuesta).
+
 Si estamos interesados en comparar dos computadores respecto al mismo
 trabajo, entonces podemos definir rendimiento como la inversa del
 tiempo de ejecución.
 
-\[ Rendimiento_{x} = \frac{1}{Tiempo\_de\_ejecución_{x}} \]
+\[ Rendimiento_{x} = \frac{1}{Tiempo\_de\_ejecuci\acute{o}n_{x}} \]
 
-Para comparar el rendimiento de dos computadores diremos que $x$ es un
+Para comparar el rendimiento relativo de dos computadores cuando
+ejecutan el mismo problema (\emph{speedup} en inglés) diremos que $x$ es un
 n\% más rápido que $y$ si:
 
-\[ \frac{Rendimiento_{x}}{Rendimiento_{y}} = 1 + \frac{n}{100} \]
+\[ \emph{Speedup} = \frac{Rendimiento_{x}}{Rendimiento_{y}} = 1 + \frac{n}{100} \]
 
 Por tanto:
 
-\[ \frac{Rendimiento_{x}}{Rendimiento_{y}} =
-\frac{\frac{1}{Tiempo\_de\_ejecución_{x}}}{\frac{1}{Tiempo\_de\_ejecución_{y}}}
-= \frac{Tiempo\_de\_ejecución_{y}}{Tiempo\_de\_ejecución_{x}} = 1 + \frac{n}{100}\]
-
+\[ \emph{Speedup} = \frac{Rendimiento_{x}}{Rendimiento_{y}} =
+\frac{\frac{1}{Tiempo\_de\_ejecuci\acute{o}n_{x}}}{\frac{1}{Tiempo\_de\_ejecuci\acute{o}n_{y}}}
+= \frac{Tiempo\_de\_ejecuci\acute{o}n_{y}}{Tiempo\_de\_ejecuci\acute{o}n_{x}} = 1 + \frac{n}{100}\]
 
 \section{Tiempo de ejecución}
 
-Fórmula del tiempo de ejecución \[ T_{ej} = NI \times CPI \times
-T_{c} \]
+El tiempo de ejecución es la mejor métrica para medir el rendimiento.
 
-Fórmula del CPI \[ CPI = \sum_{i=1}^{n} CPI_i \times f_i \]
+Tiempo de ejecución de un programa se puede calcular de la siguiente forma:
 
-\subsection{Ejercicio}
+\[ T_{ej} = NI \times CPI \times T_{c} \]
 
+donde $NI$ representa el número de instrucciones de un programa, $CPI$
+son los ciclos por instrucción y $T_{c}$ es el tiempo de ciclo del
+computador.
+
+El CPI se puede calcular de la siguiente forma, conociendo cuantos
+ciclos tarda de media cada tipo de instrucción ($CPI$) y su frecuencia de
+aparición ($f_i$):
+
+\[ CPI = \sum_{i=1}^{n} CPI_i \times f_i \]
+
+\begin{ejercicio}
+
+  \subsection*{Ejercicio}
+    
 Tenemos la siguiente distribución de instrucciones:
 
 \begin{center}
@@ -288,14 +316,14 @@ qué factor?.
 
 \end{enumerate}
 
-\subsection{Solución}
+\subsection*{Solución}
 
 Se trata de calcular en ambos casos el tiempo de CPU usando la fórmula explicada en la teoría:
 \[ T_{CPU} = NI \times CPI \times T_{ciclo} \]
 
 A partir de los resultados se determina qué máquina es más rápida y se calcula el factor de mejora.
 
-\subsection*{Apartado a}
+\subsubsection*{Apartado a}
 
 Empezamos por la configuración original (sin aplicar la optimización que describe el enunciado):
 \[ T_{CPU\_orig} = NI_{orig} \times CPI_{orig} \times T_{ciclo\_orig} \]
@@ -309,12 +337,15 @@ Para la configuración alternativa el tiempo de ciclo se incrementa un 25\% con 
   CPI_{alt} &= 0.33 \times 2 + 0.21 \times 4 + 0.12 \times 3 + 0.24 \times 3 + 0.10 \times 6 = 3.18
 \end{align*}
 
-El número de instrucciones no cambia ($NI_{alt} = NI_{orig}$), por lo que:
-\[ T_{CPU\_alt} = NI_{alt} \times 3.18 \times T_{ciclo\_alt} = NI_{orig} \times 3.18 \times 1.25 \times T_{ciclo\_orig} = NI_{orig} \times 3.975 \times T_{ciclo\_orig} \]
+El número de instrucciones no cambia ($NI_{alt} = NI_{orig}$), por lo
+que:
+\[ T_{CPU\_alt} = NI_{alt} \times 3.18 \times T_{ciclo\_alt} =
+NI_{orig} \times 3.18 \times 1.25 \times T_{ciclo\_orig} = \]
+\[ = NI_{orig} \times 3.975 \times T_{ciclo\_orig} \]
 
 Por lo tanto, la configuración original es $1.1134$ veces ($3.975 / 3.57$) más rápida que la alternativa propuesta, o lo que es lo mismo: un 11.34\%.
 
-\subsection*{Apartado b}
+\subsubsection*{Apartado b}
 
 En este caso hay que volver a calcular el CPI de la configuración alternativa teniendo en cuenta que el número de ciclos de las cargas no se ve afectado:
 \begin{align*}
@@ -324,25 +355,451 @@ T_{CPU\_alt} &= NI_{orig} \times 2.97 \times 1.25 \times T_{ciclo\_orig} = NI_{o
 
 La configuración original sigue siendo más rápida, esta vez en un factor 1.04 ($3.7125/3.57$).
 
+\end{ejercicio}
+
 \section{Métricas populares}
 
-Otras métricas como MIPS (millones de instrucciones por segundo) y
-MFLOPS (millones de operaciones de punto flotante por segundo) usado
-en \url{top500.org} son métricas de velocidad y tienen una serie de
-desventajas.
+MIPS (millones de instrucciones por segundo)
 
-Volviendo al símil del coche, los kilómetros recorido sería el
-equivalente al número de instrucciones ejecutadas por el programa.
+\[ \emph{MIPS} = \frac{NI \times 10^{-6}}{T_{ej}} = \frac{Freq (MHz)}{CPI} \]
 
-Un computador puede ofecer más MIPS a costa de requerir ejecutar más
+es una métrica de
+velocidad es fáciles de comprender ya que más MIPS significa más
+rápido. Sin embargo tiene una serie de desventajas importantes: Son
+dependientes del conjunto de instrucciones, varía entre programas en
+el mismo ordenador y puede variar inversamente al rendimiento (por
+ejemplo, un computador puede ofecer más MIPS a costa de requerir ejecutar más
 instrucciones para realizar la misma tarea que otro programa con menos
-instrucciones.
+instrucciones).
+
+MFLOPS (millones de operaciones de punto flotante por segundo),
+
+\[ \emph{MFLOPS} = \frac{NI P.F. \times 10^{-6}}{T_{ej}} \]
+
+usado
+en \url{top500.org}, es otra métrica de velocidad y su principal
+ventaja es que el número de instrucciones de punto flotante (P.F.)
+depende del algoritmo, no de la máquina. Sin embargo, también tiene una serie
+de desventajas: no se pueden aplicar a todos los programas (por
+ejemplo un compilador no usa operaciones de punto flotante), todas las
+máquinas no tienen las mismas operaciones de punto flotante y todas
+las operaciones de punto flotante no tardan lo mismo (por ejemplo una
+división tarda mucho más ciclos que una suma).
+
+Volviendo al símil del coche, los kilómetros recorridos por el coche sería el
+equivalente al número de instrucciones ejecutadas por el programa.
 
 \section{La Ley de Amdahl}
 
-\section{Cómo comparar resultados}
+Imaginemos una aplicación en la que el 80\% del tiempo transcurre
+realizando una tarea (T1) y el 20\% restante transcurre realizando otra
+tarea (T2).
+
+%\begin{figure}
+\begin{center}
+  \begin{tikzpicture}
+    \draw[draw=white] (0,0.6) rectangle node {80\%} ++(4,0.5);
+    \draw[draw=white] (4,0.6) rectangle node {20\%} ++(1,0.5);
+    \draw[draw=black,fill=black!20] (0,0) rectangle node {T1} ++(4,0.5);
+    \draw[draw=black,fill=black!10] (4,0) rectangle node {T2} ++(1,0.5);
+  \end{tikzpicture}
+\end{center}
+%\end{figure}
+
+Imaginemos también que, con mucho esfuerzo, hemos conseguido eliminar
+completamente la necesitad de ejecutar la tarea
+T2. ¿Cuál será el \emph{speedup} o mejora del rendimiento de la aplicación?
+
+Si la aplicación antes (llamémosla base) tardaba $x$ segundos y la
+aplicación ahora (llamémosla optimizada u opt) tarda 0.8$x$
+segundos (un 80\% del tiempo de la aplicación base), entonces tenemos que:
+
+\[ Speedup = \frac{Tiempo_{base}}{Tiempo_{opt}} = \frac{x}{0.8x} =
+\frac{1}{0.8} = 1.25 ~ ~ (25\%) \]
+
+Consideremos ahora que en vez de eliminar completamente la tarea T2
+hemos conseguido hacerla tan solo el doble de rápido. ¿Cuál será el
+\emph{speedup} obtenido en este caso con respecto a la aplicación base?
+
+Si la tarea se ejecuta el doble de
+rápido, tardará la mitad del tiempo, y por tanto tenemos:
+
+\begin{center}
+  \begin{tikzpicture}
+    \draw[draw=white] (0,0.25) node[left] {programa base};
+    \draw[draw=white] (0,0.6) rectangle node {80\%} ++(4,0.5);
+    \draw[draw=white] (4,0.6) rectangle node {20\%} ++(1,0.5);
+    \draw[draw=black,fill=black!20] (0,0) rectangle node {T1} ++(4,0.5);
+    \draw[draw=black,fill=black!10] (4,0) rectangle node {T2} ++(1,0.5);
+  \end{tikzpicture}
+  \begin{tikzpicture}
+    \draw[draw=white] (0,0.25) node[left] {programa opt};
+    \draw[draw=white] (0,0.6) rectangle node {80\%} ++(4,0.5);
+    \draw[draw=white] (4,0.6) rectangle node {10\%} ++(0.5,0.5);
+    \draw[draw=black,fill=black!20] (0,0) rectangle node {T1} ++(4,0.5);
+    \draw[draw=black,fill=black!10] (4,0) rectangle node {T2} ++(0.5,0.5);
+  \end{tikzpicture}
+\end{center}
+
+donde el programa optimizado muestra porcentajes relativos al tiempo
+del primer programa. El \emph{speedup} en este caso sería:
+
+\[ Speedup = \frac{Tiempo_{base}}{Tiempo_{opt}} = \frac{x}{0.9x} = \frac{1}{0.9} = 1.11 \]
+
+Para calcular este \emph{speedup} hemos hecho uso de la Ley de Amdahl.
+
+La Ley de \href{https://es.wikipedia.org/wiki/Gene_Amdahl}{Amdahl} es una 
+fórmula matemática que describe la mejora total en el rendimiento (o \emph{speedup}) de un 
+sistema (computador en nuestro caso) con respecto a la mejora de una
+fracción de tiempo
+de dicho sistema, es decir, si mejoramos una tarea cuya fracción de
+tiempo ($f$) se conoce en un factor $S$, la siguiente fórmula nos permite saber el porcentaje de
+mejora del sistema.
+
+
+\begin{center}
+  \begin{tikzpicture}
+    \draw[draw=white] (0,0.25) node[left] {programa base};
+    \draw[draw=white] (0,0.6) rectangle node {$1 - f$} ++(4,0.5);
+    \draw[draw=white] (4,0.6) rectangle node {$f$} ++(1,0.5);
+    \draw[draw=black,fill=black!20] (0,0) rectangle ++(4,0.5);
+    \draw[draw=black,fill=black!10] (4,0) rectangle ++(1,0.5);
+  \end{tikzpicture}
+  \begin{tikzpicture}
+    \draw[draw=white] (0,0.25) node[left] {programa opt};
+    \draw[draw=white] (0,0.6) rectangle node {$1 - f$} ++(4,0.5);
+    \draw[draw=white] (4,0.6) rectangle node {$f/S$} ++(0.5,0.5);
+    \draw[draw=black,fill=black!20] (0,0) rectangle ++(4,0.5);
+    \draw[draw=black,fill=black!10] (4,0) rectangle ++(0.5,0.5);
+  \end{tikzpicture}
+\end{center}
+
+\[ Speedup = \frac{Tiempo_{base}}{Tiempo_{opt}} = \frac{(1 - f) +
+  f}{(1 - f) + \frac{f}{S}} = \frac{1}{(1 - f) + \frac{f}{S}} \]
+
+\begin{center}
+\framebox{$Speedup = \frac{1}{(1 - f) + \frac{f}{S}}$}
+\end{center}
+  
+Por ejemplo, si en un procesador conseguimos mejorar las instrucciones en coma flotante para
+que se ejecuten el doble de rápidas,
+pero el procesador ejecuta una aplicación que solo dedica un 10\% de su tiempo a ejecutar estas
+instrucciones podemos aplicar la Ley de Amdahl, ya que sabemos el
+porcentaje de tiempo de la parte mejorada (10\% del total) y sabemos
+en qué factor estamos mejorando (el doble, o sea un factor de 2).
+
+\[ Speedup = \frac{1}{(1 - f) + \frac{f}{S}} = \frac{1}{(1 - 0.1) +
+  \frac{0.1}{2}} = 1.053 ~ ~ (5.3\%) \]
+
+Cabe destacar que la mejora podría cambiar al ejecutar otra aplicación
+ya que el porcentaje del tiempo que dedica a las instrucciones de coma
+flotante puede variar.
+
+\begin{ejercicio}
+
+\subsection*{Ejercicio}
+
+Supongamos que se puede mejorar la velocidad de la CPU
+de nuestra máquina en un factor de cinco (sin afectar al
+rendimiento de la E/S) por cinco veces el coste. Supongamos
+también que la CPU se utiliza el 50\% del tiempo, y que el tiempo
+restante la CPU está esperando las operaciones de E/S. ¿Cuánto se
+incrementa el rendimiento total? Si la CPU supone un tercio del 
+coste total de la máquina, ¿cuánto se incrementa el coste total? 
+Por tanto, ¿el incremento de la velocidad de la CPU en un factor 
+de cinco es una buena inversión desde un punto de vista 
+coste/rendimiento?
+
+\subsection*{Solución}
+
+Inicialmente, la relación coste/rendimiento de la máquina es $C/R$. Vamos a calcular cómo se incrementa el rendimiento por un lado y el coste por otro con el cambio. Si el rendimiento se incrementa en mayor medida que el coste, o ambos aspectos se ven mejorados en igual proporción, entonces el cambio es interesante desde el punto de vista de la relación coste/rendimiento. Si el coste se incrementa en mayor medida que el rendimiento, entonces el cambio no es aconsejable.
+
+Para calcular la mejora en el rendimiento que se obtiene con el cambio aplicamos la Ley de Amdahl, considerando que la CPU se usa el 50\% del tiempo: 
+
+\[\emph{Speedup} = \frac{1}{1-0.5 + 0.5/5} = 1.667\]
+
+Lo que significa que el rendimiento tras el cambio $R' = 1.667 \times R$.
+
+Por otro lado, la CPU supone $1/3$ del coste del sistema y se ha multiplicado por 5 su precio, con lo que el coste tras el cambio $C' = 2/3 \times C + 1/3 \times C \times 5 = 7/3 \times C = 2.334 \times C$
+
+Concluimos, pues, que el cambio no es interesante, ya que el coste se incrementa en mayor proporción que el rendimiento (incremento de 2.334 veces en el coste para obtener un factor de mejora en el rendimiento de 1.667).
+
+\end{ejercicio}
+
+\section{Cómo obtener el rendimiento medio}
+
+En esta sección veremos como obtener el rendimiento medio cuando
+ejecutamos varias aplicaciones que ofrecen diferentes prestaciones dependiendo de la máquina donde se
+ejecuten.
+
+Imaginemos, por ejemplo, que tenemos dos computadores ($A$ y $B$) y
+dos aplicaciones ($1$ y $2$) que usamos
+para evaluar el rendimiento de los computadores. Al ejecutar las
+aplicaciones en ambos computadores obtenemos los siguientes tiempos:
+
+\begin{center}
+\begin{tabular}{ccc}
+\hline
+  & Computador $A$ & Computador $B$ \\ 
+\hline
+ Aplicación 1 & 10 segundos & 2 segundos \\  
+ Aplicación 2 & 20 segundos & 60 segundos \\
+ \hline
+\end{tabular}
+\end{center}
+
+¿Qué computador obtiene mejor rendimiento?
+Para tomar esta decisión se podría obtener la media del rendimiento de las aplicaciones
+para cada computador, pero hay que tener mucho cuidado con qué media
+es mejor usar en cada caso.
+
+\subsection{Media aritmética}
+
+La media aritmética equivale a usar para obtener el rendimiento la
+suma de los tiempos de ejecución de todas las aplicaciones.
+
+Para obtener la media aritmética usaríamos la siguiente fórmula:
+
+\[ Media\_aritm\acute{e}tica = \sum_{i=1}^{n} \frac{tiempo_i }{n} \]
+
+Esta media es adecuada cuando disponemos de los tiempos de cada
+programa pero no sabemos con qué frecuencia se va a ejecutar cada uno.
+
+En el ejemplo anterior, la media aritmética para el computador $A$ y
+$B$ sería:
+
+\begin{center}
+\begin{tabular}{ccc}
+\hline
+  & Computador $A$ & Computador $B$ \\ 
+\hline
+ Aplicación 1 & 10 segundos & 2 segundos \\  
+ Aplicación 2 & 20 segundos & 60 segundos \\
+ \hline
+ Media aritmética & 15 segundos & 31 segundos \\
+ \hline
+\end{tabular}
+\end{center}
+
+Por tanto, podríamos decir que el computador $A$ es
+$\frac{31}{15}=2.07$ veces más rápido que el computador $B$.
+
+\subsection{Media aritmética ponderada}
+
+No todos los programas se ejecutan el mismo número de veces en una
+máquina. Si supiéramos la frecuencia de ejecución de cada programa,
+podríamos obtener una mejor medida del rendimiento del computador
+aplicando media aritmética ponderada:
+
+\[ Media\_aritm\acute{e}tica\_ponderada = \sum_{i=1}^{n} w_i \times tiempo_i \]
+
+donde $w_i$ es el ratio de ejecución de cada aplicación.
+
+Imaginemos ahora que sabemos que la aplicación 1 se va a ejecutar un
+10\% de las veces y la aplicación 2 el 90\% restante.
+
+En ese caso podríamos calcular la media aritmética ponderada:
+
+\begin{center}
+\begin{tabular}{ccc}
+\hline
+  & Computador $A$ & Computador $B$ \\ 
+\hline
+ Aplicación 1 (w = 0.1) & 10 segundos & 2 segundos \\  
+ Aplicación 2 (w = 0.9) & 20 segundos & 60 segundos \\
+ \hline
+ Media aritmética ponderada & 19 segundos & 54.2 segundos \\
+ \hline
+\end{tabular}
+\end{center}
+
+Podríamos decir en este caso que el computador $A$ es
+$\frac{54.2}{19}=2.85$ veces más rápido que el computador $B$.
+
+Si por el contrario la aplicación 1 se ejecutara un
+90\% de las veces y la aplicación 2 el 10\% restante, la media
+aritmética ponderada quedaría como:
+
+\begin{center}
+\begin{tabular}{ccc}
+\hline
+  & Computador $A$ & Computador $B$ \\ 
+\hline
+ Aplicación 1 (w = 0.9) & 10 segundos & 2 segundos \\  
+ Aplicación 2 (w = 0.1) & 20 segundos & 60 segundos \\
+ \hline
+ Media aritmética ponderada & 11 segundos & 7.8 segundos \\
+ \hline
+\end{tabular}
+\end{center}
+
+En este caso deberíamos decir que el computador $B$ es
+$\frac{11}{7.8}=1.41$ veces más rápido que el computador $A$.
+
+Como vemos el rendimiento puede cambiar dependiendo de la frecuencia
+de ejecución de los programas.
+
+\subsection{Media geométrica}
+\label{sec:media_geometrica}
+
+A veces es interesante normalizar los resultados obtenidos, con el fin
+de que una aplicación que tarda mucho más que otra no tenga
+necesariamente más peso en la media final.
+
+Normalizar significa dividir los resulatados de las aplicaciones por
+los obtenidos por dichas aplicaciones en una máquina de referencia.
+
+Por ejemplo, podemos normalizar los resultados anteriores respecto al
+computador $A$, dividiendo todos los tiempo por los obtenidos por el
+computador $A$:
+
+\begin{center}
+\begin{tabular}{ccccc}
+\hline
+  & Computador $A$ & Computador $B$ & Norm $A$(/$A$) & Norm $B$(/$A$) \\ 
+\hline
+Aplicación 1 & 10 segundos & 2 segundos & 1 & 0.2 \\  
+Aplicación 2 & 20 segundos & 60 segundos & 1 & 3 \\
+\hline
+\end{tabular}
+\end{center}
+
+Cuando tenemos números normalizados no podemos usar la media
+aritmética ya que puede ser engañosa: dependiendo de la máquina de
+referencia (para la que normalizamos) el resultado puede ser que una
+máquina es mejor o que la otra es mejor.
+
+Por tanto, cuando tengamos números normalizados debemos utilizar la
+media geométrica, ya que ofrecerá un resultado independiente del
+computador que usemos para normalizar.
+
+\[ Media\_geom\acute{e}trica = \sqrt[n]{\prod_{i=1}^{n} tiempo\_normalizado_i} \]
+
+Veámoslo con el ejemplo normalizado respecto al computador $A$:
+
+\begin{center}
+\begin{tabular}{ccccc}
+\hline
+  & Computador $A$ & Computador $B$ & Norm $A$(/$A$) & Norm $B$(/$A$) \\ 
+\hline
+Aplicación 1 & 10 segundos & 2 segundos & 1 & 0.2 \\  
+Aplicación 2 & 20 segundos & 60 segundos & 1 & 3 \\
+\hline
+\multicolumn{2}{l}{Media aritmética} &  & 1 & 1.6 \\
+\hline
+\multicolumn{2}{l}{Media geométrica} &  & 1 & 0.77 \\
+\hline
+\end{tabular}
+\end{center}
+
+En este caso la media aritmética me indica que el computador $A$ es
+más rápido que $B$ pero la media geométrica me indica que el
+computador $B$ es $\frac{1}{0.77}=1.29$ veces más rápido que $A$.
+
+Vemos ahora qué sucede si normalizamos con respecto al computador $B$:
+
+\begin{center}
+\begin{tabular}{ccccc}
+\hline
+  & Computador $A$ & Computador $B$ & Norm $A$(/$B$) & Norm $B$(/$B$) \\ 
+\hline
+Aplicación 1 & 10 segundos & 2 segundos & 5 & 1 \\  
+Aplicación 2 & 20 segundos & 60 segundos & 0.33 & 1 \\
+\hline
+\multicolumn{2}{l}{Media aritmética} &  & 2.67 & 1 \\
+\hline
+\multicolumn{2}{l}{Media geométrica} &  & 1.29 & 1 \\
+\hline
+\end{tabular}
+\end{center}
+
+En este caso, mientras que la media geométrica me sigue diciendo que
+el computador $B$ es 1.29 veces más rápido que el computador $A$,
+ahora la media aritmética cambia y está deacuerdo con la geométrica en
+que el computador $B$ es más rápido que el computador $A$.
+
+\subsection{Media armónica}
+
+Cuando en vez de tiempos de ejecución dispongamos de velocidades o
+frequencias, como
+es el caso de métricas como MIPS y MFLOPS, no debemos usar la media
+aritmética.
+
+Pongamos de nuevo el ejemplo de un coche que tiene que hacer un
+recorrido esta vez de ida y vuelta. Si el coche viaja a la ida a
+50km/h y a la vuetla a 100km/h, ¿a qué velocidad media ha ido?
+Definitivamente no es 75km/h, por que el tiempo que tarda en ir y en
+volver no es el mismo.
+
+Para calcular la media en este caso aplicaríamos la media armónica.
+
+\[ Media\_arm\acute{o}nica = \frac{n}{\sum_{i=1}^{n} \frac{1}{velocidad_i}} \]
+
+Y el resultado sería la velocidad media del coche: 66.67km/h
+
+La misma media deberíamos aplicar si tenemos MIPS o MFLOPS, ya que son
+métricas de velocidad.
+
+\subsection{Media armónica ponderada}
+
+Si tuviéramos información sobre las veces que se va a ejecutar cada
+programa y la velocidad de cada uno en cada computador, entonces deberíamos usar la media armónica ponderada:
+
+\[ Media\_arm\acute{o}nica\_ponderada = \frac{n}{\sum_{i=1}^{n} \frac{w_i}{velocidad_i}} \]
+
+Nota: Números de velocidad normalizados se deberán calcular con la
+media geométrica por las razones explicadas en la
+sección~\ref{sec:media_geometrica}.
 
 \section{Programas de prueba (benchmarks)}
+
+Los benchmarks son programas de prueba que sirven como instrumento para medir el rendimiento de un sistema o de sus componentes. 
+
+Estos programas de prueba pueden ser diseñados específicamente para
+medir cualquiera de los componentes del sistema, ya sea la CPU,
+tarjeta grafica, RAM, etc.
+
+Existen distintos tipos de benchmarks con sus ventajas e inconvenientes:
+
+\begin{itemize}
+
+\item Aplicaciones reales: aunque son las más precisas a la hora de
+  obtener el rendimiento, pueden tener problemas de portabilidad.
+
+\item Aplicaciones modificadas: solucionan los problemas de
+  portabilidad de las aplicaciones reales y se centran en un aspecto
+  concreto del sistema.
+  
+\item Nucleos (kernels): son pequeñas partes de cruciales de programas reales, que se
+  ejecutan frecuentemente.
+
+\item Benchmarks reducidos (toys): Son benchmarks pequeños y
+  fácilmente portables, aunque poco útiles para evaluar el rendimiento.
+
+\item Benchmarks sintéticos: si objetivo es obtener un perfil medio de
+  ejecución, por ejemplo se puede indicar cuantas operaciones de
+  lectura el programa va a tener. No son adecuados para
+  obtener medidas de rendimiento fiables.
+
+\end{itemize}
+
+Existen algunos conjuntos de aplicaciones (o benchmark suites) usados ampliamente para evaluar
+prestaciones:
+
+\begin{itemize}
+
+\item SPEC (Standard Performance Evaluation Coorporation): Tiene como
+  objetivo crear un benchmark estándar para medir el rendimiento de
+  computadores y controlar los resultados de los tests realizados, que
+  posteriormente se hacen publicos. Principalmente enfocado en medir
+  el rendimiento de la CPU.
+
+\item TPC (Transaction Processing Council): Modelan usuarios que
+  ejecutan transacciones en una base de datos. El TPC mide la rapidez
+  y fiabilidad con la que se realizan dichas transacciones. La unidad
+  de medida son transacciones por minuto o segundo.
+
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
